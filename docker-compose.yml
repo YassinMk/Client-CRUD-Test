@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysqlcontainer
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: client_crud
+    ports:
+      - "3306:3306"
+    networks:
+      - networkmysql
+
+  crudapp:
+    build:
+      context: .
+      dockerfile: inline
+    container_name: crudcontainer
+    ports:
+      - "8081:8081"
+    environment:
+      MYSQL_HOST: mysqlcontainer
+      MYSQL_PORT: 3306
+      MYSQL_DB_NAME: client_crud
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    depends_on:
+      - mysql
+    networks:
+      - networkmysql
+
+networks:
+  networkmysql:
+    driver: bridge
+
+x-dockerfile:
+  crudapp: |
+    FROM openjdk:17-jdk-slim
+    WORKDIR /app
+    COPY target/CLIENT-CRUD-0.0.1-SNAPSHOT.jar app.jar
+    EXPOSE 8081
+    ENTRYPOINT ["java", "-jar", "app.jar"]
