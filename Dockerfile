@@ -1,5 +1,5 @@
 # Stage 1: Build the JAR file
-FROM maven:3.9.5-openjdk-17 as builder
+FROM maven:3.9-openjdk-17 as builder
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
